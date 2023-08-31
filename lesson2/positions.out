@@ -1,0 +1,6 @@
+Here are the types of instructions in this Bril program (exluding labels), sorted by frequency: 
+
+const: 2
+jmp: 1
+add: 1
+print: 1
