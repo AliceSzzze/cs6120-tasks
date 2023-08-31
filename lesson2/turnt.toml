@@ -1,2 +1,2 @@
-command = "python3 tool.py < {filename}"
+command = "python3 instr_counter.py < {filename}"
 output.out = "-"
