@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/lesson3/DCE/DCE.iml" filepath="$PROJECT_DIR$/lesson3/DCE/DCE.iml" />
-      <module fileurl="file://$PROJECT_DIR$/lesson3/LVN/LVN.iml" filepath="$PROJECT_DIR$/lesson3/LVN/LVN.iml" />
+      <module fileurl="file://$PROJECT_DIR$/java-tasks/DCE/DCE.iml" filepath="$PROJECT_DIR$/java-tasks/DCE/DCE.iml" />
+      <module fileurl="file://$PROJECT_DIR$/java-tasks/LVN/LVN.iml" filepath="$PROJECT_DIR$/java-tasks/LVN/LVN.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/cs6120-tasks.iml" filepath="$PROJECT_DIR$/.idea/cs6120-tasks.iml" />
     </modules>
   </component>
