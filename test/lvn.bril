@@ -1,0 +1,8 @@
+@main(input : int) {
+  zero : int = const 0;
+  ten : int = const 10;
+  sum1 : int = add zero ten;
+  sum2 : int = add zero ten;
+  sum3 : int = add zero ten;
+  sum4 : int = add zero ten;
+}
