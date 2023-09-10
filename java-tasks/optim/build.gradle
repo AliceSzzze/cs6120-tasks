@@ -25,7 +25,7 @@ test {
 
 jar {
     manifest {
-        attributes "Main-Class": "org.optim.LVN"
+        attributes "Main-Class": "org.optim.lvn.LVN"
     }
 
     from {
@@ -33,6 +33,3 @@ jar {
     }
 }
 
-application {
-    mainClass = 'org.optim.LVN'
-}

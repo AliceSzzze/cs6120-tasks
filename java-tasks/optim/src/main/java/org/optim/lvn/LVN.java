@@ -1,7 +1,11 @@
-package org.optim;
+package org.optim.lvn;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.optim.Arg;
+import org.optim.Expr;
+import org.optim.Num;
+import org.optim.Var;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,12 +30,9 @@ public class LVN {
   public static void main(String[] args) throws IOException {
     BufferedReader br =
             new BufferedReader(new InputStreamReader(System.in));
-//    final String content = bufferedReader.readLine();
-//    final String content = Files.readString(Path.of(jsonFileName));
     StringBuilder content = new StringBuilder();
     for (String line = br.readLine(); line != null; line = br.readLine()) {
       content.append(line);
-//      System.out.println(line);
     }
     br.close();
 
