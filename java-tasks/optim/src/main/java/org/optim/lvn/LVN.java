@@ -2,10 +2,7 @@ package org.optim.lvn;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.optim.Arg;
-import org.optim.Expr;
-import org.optim.Num;
-import org.optim.Var;
+import org.optim.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,11 +17,10 @@ public class LVN {
   private final static String DEST = "dest";
   private final static String OP = "op";
 
-  // TODO: add floating point stuff
-  private final static List<String> acceptedOps = Arrays.asList("add", "mul", "sub",
-          "div",
-          "eq",
-          "lt", "gt", "lt", "ge");
+  private final static List<String> acceptedOps = Arrays.asList("const", "id",
+          "add", "mul", "sub", "div", "eq", "lt", "gt", "lt", "ge", "not",
+          "and", "or", "fadd", "fmul", "fsub", "fdiv", "feq", "flt", "fle",
+          "fgt", "fge");
 
 
   public static void main(String[] args) throws IOException {
@@ -80,19 +76,39 @@ public class LVN {
         if (instr.has(ARGS)) {
           JSONArray jargs = (JSONArray) instr.get(ARGS);
 
-          for (Object obj : jargs) {
-            if (obj instanceof Number n) {
-              Num num = new Num((Double) n);
-              args.add(num);
+          for (int j = 0; j < jargs.length(); j++) {
+            Object obj = jargs.get(j);
+
+            // must be a var if it is not a number
+            String name = obj.toString();
+            Expr varExpr = vars2Exprs.get(name);
+            Var var;
+            if (varExpr != null && exprs2Vars.containsKey(varExpr)) {
+              var = exprs2Vars.get(varExpr).peek();
+              jargs.put(j, var.getName());
             } else {
-              // must be a var if it is not a number
-              String name = obj.toString();
-              Var var = new Var(name, varVersions.getOrDefault(name, 0));
-              args.add(var);
+              varVersions.putIfAbsent(name, 0);
+              var = new Var(name, varVersions.get(name));
             }
+
+            args.add(var);
           }
         }
-//        TODO: sort args
+
+        if (instr.has("value")) {
+          Object val = instr.get("value");
+          if (val instanceof Number n) {
+            Num num = new Num(n.doubleValue());
+            args.add(num);
+          } else if (val instanceof Boolean b) {
+            Bool bool = new Bool(b);
+            args.add(bool);
+          } else {
+            throw new IllegalArgumentException("value is not a number");
+          }
+
+        }
+//        TODO: sort args for commutative ops
 
         Var dest = null;
         if (instr.has(DEST)) {
@@ -102,18 +118,27 @@ public class LVN {
           dest = new Var(destName, varVersions.get(destName));
         }
 
-        // TODO: replace args with what's in the map
-
         Expr expr = new Expr(op, args);
         if (exprs2Vars.containsKey(expr)) {
+          // if this is an expression that we have already seen
           Queue<Var> varsWithExpr = exprs2Vars.get(expr);
           // rewrite the expression by using the canonical home for the expr
           instr.put(ARGS, List.of(varsWithExpr.peek().getName()));
           instr.put(OP, "id");
-          if (dest != null) varsWithExpr.add(dest);
+          instr.remove("value");
         } else if (dest != null) {
-          if (dest.getVersion() > 0) {
+          Queue<Var> q = new LinkedList<>();
+          q.add(dest);
+          exprs2Vars.put(expr, q);
+
+        }
+
+        if (dest != null) {
+          if (dest.getVersion() > 0 &&
+                  vars2Exprs.containsKey(dest.getName()) &&
+                  !vars2Exprs.get(dest.getName()).equals(expr)) {
             // unmark dest as the canonical home for the old Expr if necessary
+
             Expr oldExpr = vars2Exprs.get(dest.getName());
             Queue<Var> homes = exprs2Vars.get(oldExpr);
 
@@ -126,17 +151,12 @@ public class LVN {
               exprs2Vars.remove(oldExpr);
             }
           }
-          Queue<Var> q = new LinkedList<>();
-          q.add(dest);
-          exprs2Vars.put(expr, q);
-        }
 
-        if (dest != null) {
+          // associate the variable with the expression
+//          System.out.println("associated " + dest.getName() +" with " + expr);
           vars2Exprs.put(dest.getName(), expr);
         }
-
       }
-//      System.out.println(jInstrs);
     }
   }
 }
