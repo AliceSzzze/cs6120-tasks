@@ -19,8 +19,10 @@ public class LVN {
 
   private final static List<String> acceptedOps = Arrays.asList("const", "id",
           "add", "mul", "sub", "div", "eq", "lt", "gt", "lt", "ge", "not",
-          "and", "or", "fadd", "fmul", "fsub", "fdiv", "feq", "flt", "fle",
-          "fgt", "fge");
+          "and", "or");
+// TODO: add float ops
+//  "fadd", "fmul", "fsub", "fdiv", "feq", "flt", "fle",
+//          "fgt", "fge"
 
 
   public static void main(String[] args) throws IOException {
