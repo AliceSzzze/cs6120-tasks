@@ -117,12 +117,8 @@ public class LVN {
             Expr oldExpr = vars2Exprs.get(dest.getName());
             Queue<Var> homes = exprs2Vars.get(oldExpr);
 
-//            if (homes == null) {
-//              System.out.println(dest);
-//            }
-
-            while (homes.peek().equals(dest) ||
-                    varVersions.get(homes.peek().getName()) > homes.peek().getVersion()) {
+            while (!homes.isEmpty() && (homes.peek().equals(dest) ||
+                    varVersions.get(homes.peek().getName()) > homes.peek().getVersion())) {
               homes.poll();
             }
 
