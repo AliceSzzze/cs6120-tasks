@@ -128,9 +128,13 @@ public class LVN {
           instr.remove("value");
         } else if (dest != null) {
           Queue<Var> q = new LinkedList<>();
+          if (expr.getOp().equals("id")) {
+            Var idv = (Var) args.get(0);
+            q.add(idv);
+            vars2Exprs.putIfAbsent(idv.getName(), expr);
+          }
           q.add(dest);
           exprs2Vars.put(expr, q);
-
         }
 
         if (dest != null) {
