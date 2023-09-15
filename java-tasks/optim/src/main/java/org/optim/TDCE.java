@@ -1,4 +1,4 @@
-package org.optim.tdce;
+package org.optim;
 
 import java.io.BufferedReader;
 import java.io.IOException;

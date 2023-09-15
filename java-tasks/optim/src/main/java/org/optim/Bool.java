@@ -1,6 +1,7 @@
 package org.optim;
 
 import lombok.Data;
+import org.optim.Arg;
 
 @Data
 public class Bool implements Arg {
