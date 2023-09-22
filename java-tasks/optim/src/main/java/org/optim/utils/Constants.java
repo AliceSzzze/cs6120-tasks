@@ -1,6 +1,6 @@
 package org.optim.utils;
 
-public class JSONConstants {
+public class Constants {
   public final static String FUNCTIONS = "functions";
   public final static String INSTRS = "instrs";
   public final static String LABEL = "label";
@@ -9,4 +9,5 @@ public class JSONConstants {
   public final static String DEST = "dest";
   public final static String OP = "op";
   public final static String VALUE = "value";
+  public final static String ENTRY = "__entry__";
 }

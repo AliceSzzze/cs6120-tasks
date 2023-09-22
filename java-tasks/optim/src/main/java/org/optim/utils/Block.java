@@ -1,5 +1,7 @@
 package org.optim.utils;
 
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -26,5 +28,10 @@ public class Block {
 
   public void addInstr(JSONObject instr) {
     instrs.add(instr);
+  }
+
+  @Override
+  public String toString() {
+    return label;
   }
 }

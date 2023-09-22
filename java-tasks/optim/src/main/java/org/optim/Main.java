@@ -7,7 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import static org.optim.utils.JSONConstants.FUNCTIONS;
+import static org.optim.utils.Constants.FUNCTIONS;
 
 public class Main {
 
@@ -32,10 +32,49 @@ public class Main {
           dataflow.analyze(functionArray.getJSONObject(i));
         }
         break;
+      case "dominators":
+        for (int i = 0; i < functionArray.length(); i++) {
+          Dom dom = new Dom();
+          System.out.println("----------------------------------------------");
+          System.out.println("function: " + functionArray.getJSONObject(i).getString("name"));
+          var res = dom.dominators(functionArray.getJSONObject(i));
+          System.out.println(res);
+        }
+        break;
+      case "domTree":
+        for (int i = 0; i < functionArray.length(); i++) {
+          Dom dom = new Dom();
+          System.out.println("----------------------------------------------");
+          System.out.println("function: " + functionArray.getJSONObject(i).getString("name"));
+          dom.domTree(functionArray.getJSONObject(i));
+        }
+        break;
+      case "frontier":
+        for (int i = 0; i < functionArray.length(); i++) {
+          Dom dom = new Dom();
+          System.out.println("----------------------------------------------");
+          System.out.println("function: " + functionArray.getJSONObject(i).getString("name"));
+          dom.findDomFrontier(functionArray.getJSONObject(i));
+        }
+        break;
+      case "domVerify":
+        for (int i = 0; i < functionArray.length(); i++) {
+          Dom dom = new Dom();
+          dom.verify(functionArray.getJSONObject(i));
+        }
+        break;
+      case "domTreeGraph":
+        for (int i = 0; i < functionArray.length(); i++) {
+          Dom dom = new Dom();
+          dom.domTreeDot(functionArray.getJSONObject(i));
+        }
+        break;
       case "lvn":
         break;
       case "tdce":
         break;
     }
+
+
   }
 }

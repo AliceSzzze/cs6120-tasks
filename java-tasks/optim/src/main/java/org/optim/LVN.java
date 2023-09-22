@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 
-import static org.optim.utils.JSONConstants.*;
+import static org.optim.utils.Constants.*;
 
 public class LVN {
 

@@ -2,27 +2,41 @@ package org.optim;
 
 import org.json.JSONObject;
 import org.optim.utils.Block;
-import org.optim.utils.BlockFormer;
+import org.optim.utils.Cfg;
 
 import java.util.*;
 
-import static org.optim.utils.JSONConstants.ARGS;
-import static org.optim.utils.JSONConstants.DEST;
+import static org.optim.utils.Constants.ARGS;
+import static org.optim.utils.Constants.DEST;
 
 public class Dataflow {
+
+  public enum Direction {
+    FORWARD, BACKWARD;
+  }
   final String type;
+  final Direction direction;
 
   Map<String, Set<String>> defs;
   Map<String, Set<String>> uses;
 
   public Dataflow(String analysis) {
     this.type = analysis;
+
+    switch (analysis) {
+      case "live":
+        this.direction = Direction.BACKWARD;
+        break;
+
+      default:
+        this.direction = Direction.FORWARD;
+    }
   }
 
   public void analyze(final JSONObject function) {
     System.out.println("----------------------------------------------");
     System.out.println("function: " + function.getString("name"));
-    Map<String, Block> blocks = BlockFormer.formBlocks(function);
+    Map<String, Block> blocks = Cfg.formBlocks(function);
 
     Queue<Block> worklist = new LinkedList<>(blocks.values());
 
@@ -30,6 +44,7 @@ public class Dataflow {
     Map<String, Set<String>> out = new HashMap<>();
 
     for (String block : blocks.keySet()) {
+      // replace with init function
       in.put(block, new HashSet<>());
       out.put(block, new HashSet<>());
     }
@@ -45,16 +60,18 @@ public class Dataflow {
 
       curOut.clear();
 
-      for (Block succ : cur.succs) {
-        curOut.addAll(in.get(succ.label));
+      for (Block parent : getDependingBlocks(cur)) {
+        // replace with merge function
+        curOut.addAll(in.get(parent.label));
       }
 
+      // replace with transfer function
       curIn.clear();
       curIn.addAll(curOut);
       curIn.removeAll(this.defs.get(cur.label));
       curIn.addAll(this.uses.get(cur.label));
 
-      if (!oldIn.equals(curIn)) worklist.addAll(cur.preds);
+      if (!oldIn.equals(curIn)) worklist.addAll(getDependentBlocks(cur));
     }
 
     for (String block : blocks.keySet()) {
@@ -62,6 +79,22 @@ public class Dataflow {
       System.out.println("Variables that are live on entry: " + in.get(block));
       System.out.println("Variables that are live on exit: " + out.get(block));
       System.out.println();
+    }
+  }
+
+  private Set<Block> getDependentBlocks(Block cur) {
+    if (this.direction == Direction.FORWARD) {
+      return cur.succs;
+    } else {
+      return cur.preds;
+    }
+  }
+
+  private Set<Block> getDependingBlocks(Block cur) {
+    if (this.direction == Direction.FORWARD) {
+      return cur.preds;
+    } else {
+      return cur.succs;
     }
   }
 

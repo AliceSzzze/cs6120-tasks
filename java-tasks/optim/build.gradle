@@ -25,7 +25,7 @@ test {
 
 jar {
     manifest {
-        attributes "Main-Class": "org.optim.Parser"
+        attributes "Main-Class": "org.optim.Main"
     }
 
     from {
