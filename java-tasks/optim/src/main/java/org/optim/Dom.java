@@ -40,9 +40,6 @@ public class Dom {
   }
 
   public Map<Block, Set<Block>> dominators(JSONObject function) {
-    System.out.println("----------------------------------------------");
-    System.out.println("function: " + function.getString("name"));
-
     if (this.blocks == null)
       this.blocks = Cfg.formBlocks(function);
 
@@ -125,8 +122,6 @@ public class Dom {
 
       worklist.addAll(cur.succs);
     }
-
-//    System.out.println(idom);
   }
 
   public void findDomFrontier(JSONObject function) {
@@ -181,8 +176,6 @@ public class Dom {
       }
     }
 
-    System.out.println(dom.equals(solution));
-
     // verify dominator tree
 
     for (Block block : blocks.values()) {
@@ -224,6 +217,7 @@ public class Dom {
         assert found;
       }
     }
+    System.out.println("verified");
   }
 
   public void domTreeDot(JSONObject function) throws IOException {

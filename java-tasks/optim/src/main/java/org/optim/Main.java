@@ -55,6 +55,7 @@ public class Main {
           System.out.println("----------------------------------------------");
           System.out.println("function: " + functionArray.getJSONObject(i).getString("name"));
           dom.findDomFrontier(functionArray.getJSONObject(i));
+          System.out.println(dom.frontier);
         }
         break;
       case "domVerify":

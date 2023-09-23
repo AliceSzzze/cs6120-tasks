@@ -37,7 +37,8 @@ public class Cfg {
 
       if (instr.has(LABEL)) {
         final String label = instr.getString(LABEL);
-        curBlock = blocks.get(label);
+        curBlock = blocks.computeIfAbsent(label, k -> new Block(label));
+        if (curBlock == null) System.out.println(label);
       } else {
         curBlock.addInstr(instr);
 
@@ -57,14 +58,17 @@ public class Cfg {
           // ignore unreachable code?
           while (i < instrs.length() && !instrs.getJSONObject(i).has(LABEL))
             i++;
-        } else if (i < instrs.length() && instrs.getJSONObject(i).has(LABEL)) {
-          // if last ordinary instr in block, fall through
-          final String nextLabel = instrs.getJSONObject(i).getString(LABEL);
-          Block next = blocks.computeIfAbsent(nextLabel,
-                  k -> new Block(nextLabel));
-          curBlock.succs.add(next);
-          next.preds.add(curBlock);
+          continue;
         }
+      }
+
+      if (i < instrs.length() && instrs.getJSONObject(i).has(LABEL)) {
+        // if last ordinary instr in block, fall through
+        final String nextLabel = instrs.getJSONObject(i).getString(LABEL);
+        Block next = blocks.computeIfAbsent(nextLabel,
+                k -> new Block(nextLabel));
+        curBlock.succs.add(next);
+        next.preds.add(curBlock);
       }
     }
 
@@ -72,7 +76,7 @@ public class Cfg {
   }
 
   public static void cfgDot(final String function,
-                       final Map<String, Block> blocks) throws IOException {
+                            final Map<String, Block> blocks) throws IOException {
     FileWriter file = new FileWriter(function + "_cfg.txt");
     BufferedWriter output = new BufferedWriter(file);
     output.write(String.format("digraph %s {\n", function));
