@@ -9,10 +9,12 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.*;
 
-import static org.optim.utils.Constants.ENTRY;
-
 public class Dom {
+  Block entry;
+
   Map<String, Block> blocks;
+
+  String functionName;
 
   /**
    * Maps each block to its immediate dominator.
@@ -28,6 +30,13 @@ public class Dom {
 
   List<Block> revPostOrder = new ArrayList<>();
 
+  public Dom(JSONObject function) {
+    final Cfg cfg = new Cfg(function);
+    entry = cfg.getEntry();
+    blocks = cfg.getBlocks();
+    functionName = cfg.getFunctionName();
+  }
+
   private void dfs(Block cur, Set<Block> visited) {
     for (Block succ: cur.succs) {
       if (!visited.contains(succ)) {
@@ -39,10 +48,7 @@ public class Dom {
     revPostOrder.add(cur);
   }
 
-  public Map<Block, Set<Block>> dominators(JSONObject function) {
-    if (this.blocks == null)
-      this.blocks = Cfg.formBlocks(function);
-
+  public Map<Block, Set<Block>> dominators() {
     dom = new HashMap<>();
 
     // set of all nodes
@@ -52,7 +58,6 @@ public class Dom {
       dom.put(block, init);
     }
 
-    Block entry = blocks.get(ENTRY);
     dfs(entry, new HashSet<>());
 
     dom.put(entry, Set.of(blocks.get(entry.label)));
@@ -86,11 +91,9 @@ public class Dom {
     return dom;
   }
 
-  public void domTree(JSONObject function) {
-    if (dom == null) dominators(function);
+  public void domTree() {
+    if (dom == null) dominators();
     idom = new HashMap<>();
-
-    final Block entry = blocks.get(ENTRY);
 
     Queue<Block> worklist = new LinkedList<>(entry.succs);
 
@@ -124,8 +127,8 @@ public class Dom {
     }
   }
 
-  public void findDomFrontier(JSONObject function) {
-    domTree(function);
+  public void findDomFrontier() {
+    domTree();
 
     frontier = new HashMap<>();
 
@@ -151,12 +154,12 @@ public class Dom {
     }
   }
 
-  public void verify(JSONObject function) {
-    findDomFrontier(function);
+  public void verify() {
+    findDomFrontier();
 
     // verify dominators
     Stack<List<Block>> dfs = new Stack<>();
-    dfs.add(List.of(blocks.get(ENTRY)));
+    dfs.add(List.of(entry));
 
     Map<Block, Set<Block>> solution = new HashMap<>();
 
@@ -187,8 +190,11 @@ public class Dom {
 
         if (dominators.contains(cur)) {
           if (!cur.equals(idom.get(block))) {
-            throw new AssertionError(String.format("expected idom of %s to " +
-                    "be %s, but found %s", block, cur, idom.get(block)));
+            throw new AssertionError(String.format("expected idom of %s in " +
+                    "%s to " +
+                    "be %s, but found %s", block, functionName,
+                    cur,
+                    idom.get(block)));
           }
           break;
         } else {
@@ -220,9 +226,8 @@ public class Dom {
     System.out.println("verified");
   }
 
-  public void domTreeDot(JSONObject function) throws IOException {
-    domTree(function);
-    final String functionName = function.getString("name");
+  public void domTreeDot() throws IOException {
+    domTree();
     FileWriter file = new FileWriter(functionName + "_domTree.txt");
     BufferedWriter output = new BufferedWriter(file);
 

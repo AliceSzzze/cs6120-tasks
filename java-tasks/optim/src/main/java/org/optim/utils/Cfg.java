@@ -1,5 +1,6 @@
 package org.optim.utils;
 
+import lombok.Getter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -11,8 +12,16 @@ import java.util.Map;
 
 import static org.optim.utils.Constants.*;
 
+@Getter
 public class Cfg {
-  public static Map<String, Block> formBlocks(JSONObject function) {
+  Block entry;
+  Map<String, Block> blocks;
+  String functionName;
+  public Cfg (JSONObject function) {
+    blocks = formBlocks(function);
+    functionName = function.getString("name");
+  }
+  public Map<String, Block> formBlocks(JSONObject function) {
     JSONArray instrs = function.getJSONArray(INSTRS);
 
     Map<String, Block> blocks = new HashMap<>();
@@ -20,17 +29,18 @@ public class Cfg {
     int i = 0;
     Block curBlock;
 
-    // can the first block have a label?
-//    if (instrs.getJSONObject(0).has(LABEL)) {
-//      final String label = instrs.getJSONObject(0).getString(LABEL);
-//      curBlock = new Block(label);
-//      blocks.put(label, curBlock);
-//      i++;
-//    } else {
-    curBlock = new Block(ENTRY);
-    blocks.put(ENTRY, curBlock);
-//    }
+//     can the first block have a label?
+    if (instrs.getJSONObject(0).has(LABEL)) {
+      final String label = instrs.getJSONObject(0).getString(LABEL);
+      curBlock = new Block(label);
+      blocks.put(label, curBlock);
+      i++;
+    } else {
+      curBlock = new Block(ENTRY);
+      blocks.put(ENTRY, curBlock);
+    }
 
+    this.entry = curBlock;
     while (i < instrs.length()) {
       JSONObject instr = instrs.getJSONObject(i);
       i++;
@@ -75,11 +85,10 @@ public class Cfg {
     return blocks;
   }
 
-  public static void cfgDot(final String function,
-                            final Map<String, Block> blocks) throws IOException {
-    FileWriter file = new FileWriter(function + "_cfg.txt");
+  public static void cfgDot(final String functionName, Map<String, Block> blocks) throws IOException {
+    FileWriter file = new FileWriter(functionName + "_cfg.txt");
     BufferedWriter output = new BufferedWriter(file);
-    output.write(String.format("digraph %s {\n", function));
+    output.write(String.format("digraph %s {\n", functionName));
 
     for (String block : blocks.keySet()) {
       String name = block.replace('.', '_');

@@ -34,40 +34,40 @@ public class Main {
         break;
       case "dominators":
         for (int i = 0; i < functionArray.length(); i++) {
-          Dom dom = new Dom();
+          Dom dom = new Dom(functionArray.getJSONObject(i));
           System.out.println("----------------------------------------------");
-          System.out.println("function: " + functionArray.getJSONObject(i).getString("name"));
-          var res = dom.dominators(functionArray.getJSONObject(i));
+          System.out.println("function: " + dom.functionName);
+          var res = dom.dominators();
           System.out.println(res);
         }
         break;
       case "domTree":
         for (int i = 0; i < functionArray.length(); i++) {
-          Dom dom = new Dom();
+          Dom dom = new Dom(functionArray.getJSONObject(i));
           System.out.println("----------------------------------------------");
           System.out.println("function: " + functionArray.getJSONObject(i).getString("name"));
-          dom.domTree(functionArray.getJSONObject(i));
+          dom.domTree();
         }
         break;
       case "frontier":
         for (int i = 0; i < functionArray.length(); i++) {
-          Dom dom = new Dom();
+          Dom dom = new Dom(functionArray.getJSONObject(i));
           System.out.println("----------------------------------------------");
           System.out.println("function: " + functionArray.getJSONObject(i).getString("name"));
-          dom.findDomFrontier(functionArray.getJSONObject(i));
+          dom.findDomFrontier();
           System.out.println(dom.frontier);
         }
         break;
       case "domVerify":
         for (int i = 0; i < functionArray.length(); i++) {
-          Dom dom = new Dom();
-          dom.verify(functionArray.getJSONObject(i));
+          Dom dom = new Dom(functionArray.getJSONObject(i));
+          dom.verify();
         }
         break;
       case "domTreeGraph":
         for (int i = 0; i < functionArray.length(); i++) {
-          Dom dom = new Dom();
-          dom.domTreeDot(functionArray.getJSONObject(i));
+          Dom dom = new Dom(functionArray.getJSONObject(i));
+          dom.domTreeDot();
         }
         break;
       case "lvn":

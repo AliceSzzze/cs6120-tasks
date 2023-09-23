@@ -36,7 +36,8 @@ public class Dataflow {
   public void analyze(final JSONObject function) {
     System.out.println("----------------------------------------------");
     System.out.println("function: " + function.getString("name"));
-    Map<String, Block> blocks = Cfg.formBlocks(function);
+    Cfg cfg = new Cfg(function);
+    Map<String, Block> blocks = cfg.getBlocks();
 
     Queue<Block> worklist = new LinkedList<>(blocks.values());
 
