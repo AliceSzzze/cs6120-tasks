@@ -1,9 +1,0 @@
-extract = '(.*)'
-benchmarks = '../../bril/benchmarks/*/*.bril'
-timeout = 10
-
-[runs.baseline]
-pipeline = [
-    "bril2json",
-    "java -ea -jar ./optim/build/libs/optim.jar domVerify"
-]
