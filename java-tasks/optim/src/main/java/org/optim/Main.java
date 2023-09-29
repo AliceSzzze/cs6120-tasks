@@ -74,8 +74,10 @@ public class Main {
 
       case "fromSSA":
         for (int i = 0; i < functionArray.length(); i++) {
-
+          SSA ssa = new SSA(functionArray.getJSONObject(i));
+          ssa.fromSSA();
         }
+        System.out.println(program);
         break;
       case "toSSA":
         for (int i = 0; i < functionArray.length(); i++) {

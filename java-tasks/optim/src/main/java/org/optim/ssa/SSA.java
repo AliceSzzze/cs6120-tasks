@@ -51,6 +51,50 @@ public class SSA {
     renderPhi();
   }
 
+  public void fromSSA() {
+    for (Block block: dom.getBlocks().values()) {
+      for (int i = 0; i < block.instrs.size(); i++) {
+        JSONObject instr = block.instrs.get(i);
+        if (instr.has(OP) && instr.get(OP).equals(PHI)) {
+          JSONArray labels = instr.getJSONArray(LABELS);
+          JSONArray args = instr.getJSONArray(ARGS);
+
+          for (int j = 0; j < args.length(); j++) {
+            String label = labels.getString(j);
+            String arg = args.getString(j);
+            Block pred = dom.getBlocks().get(label.toString());
+            JSONObject newInstr = new JSONObject()
+                    .put(DEST, instr.get(DEST))
+                    .put(ARGS, List.of(arg))
+                    .put(OP, "id");
+            pred.instrs.add(newInstr);
+          }
+        }
+      }
+
+      List<JSONObject> philessInstrs = new ArrayList<>();
+      for (JSONObject instr : block.instrs) {
+        if (!instr.has(OP) || !instr.get(OP).equals(PHI)) {
+          philessInstrs.add(instr);
+        }
+      }
+      block.instrs = philessInstrs;
+    }
+
+    JSONArray origInstrs = function.getJSONArray(INSTRS);
+    JSONArray newInstrs = new JSONArray();
+
+    for (int i = 0; i < origInstrs.length(); i++) {
+      while (i < origInstrs.length() && !origInstrs.getJSONObject(i).has(LABEL)) i++;
+      if (i < origInstrs.length()) {
+        newInstrs.put(origInstrs.getJSONObject(i));
+        String label = origInstrs.getJSONObject(i).getString(LABEL);
+        newInstrs.putAll(dom.getBlocks().get(label).instrs);
+      }
+    }
+
+    function.put(INSTRS, newInstrs);
+  }
   private void renameArgs() {
     if (!function.has(ARGS)) return;
 
