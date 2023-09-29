@@ -11,4 +11,9 @@ public class Var implements Arg {
   public int compareTo(Object o) {
     return 0;
   }
+
+  @Override
+  public String toString() {
+    return name+"."+version;
+  }
 }

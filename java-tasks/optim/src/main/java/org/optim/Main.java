@@ -2,6 +2,7 @@ package org.optim;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.optim.ssa.SSA;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -70,6 +71,20 @@ public class Main {
           dom.domTreeDot();
         }
         break;
+
+      case "fromSSA":
+        for (int i = 0; i < functionArray.length(); i++) {
+
+        }
+        break;
+      case "toSSA":
+        for (int i = 0; i < functionArray.length(); i++) {
+          SSA ssa = new SSA(functionArray.getJSONObject(i));
+          ssa.toSSA();
+        }
+        System.out.println(program);
+        break;
+
       case "lvn":
         break;
       case "tdce":

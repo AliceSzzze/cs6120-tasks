@@ -1,5 +1,6 @@
 package org.optim;
 
+import lombok.Getter;
 import org.json.JSONObject;
 import org.optim.utils.Block;
 import org.optim.utils.Cfg;
@@ -9,6 +10,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.*;
 
+@Getter
 public class Dom {
   Block entry;
 

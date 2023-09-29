@@ -10,4 +10,6 @@ public class Constants {
   public final static String OP = "op";
   public final static String VALUE = "value";
   public final static String ENTRY = "__entry__";
+  public final static String PHI = "phi";
+  public final static String TYPE = "type";
 }
