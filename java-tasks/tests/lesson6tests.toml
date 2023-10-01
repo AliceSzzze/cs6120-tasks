@@ -5,6 +5,20 @@ timeout = 10
 [runs.baseline]
 pipeline = [
     "bril2json",
+    "brili -p {args}"
+]
+
+[runs.SSA]
+pipeline = [
+    "bril2json",
     "java -ea -jar ../optim/build/libs/optim.jar toSSA",
     "brili -p {args}"
 ]
+
+#[runs.outOfSSA]
+#pipeline = [
+#    "bril2json",
+#    "java -ea -jar ../optim/build/libs/optim.jar toSSA",
+#    "java -ea -jar ../optim/build/libs/optim.jar fromSSA",
+#    "brili -p {args}"
+#]

@@ -62,7 +62,7 @@ public class SSA {
           for (int j = 0; j < args.length(); j++) {
             String label = labels.getString(j);
             String arg = args.getString(j);
-            Block pred = dom.getBlocks().get(label.toString());
+            Block pred = dom.getBlocks().get(label);
             JSONObject newInstr = new JSONObject()
                     .put(DEST, instr.get(DEST))
                     .put(ARGS, List.of(arg))

@@ -40,7 +40,7 @@ public class Dom {
   }
 
   private void dfs(Block cur, Set<Block> visited) {
-    for (Block succ: cur.succs) {
+    for (Block succ : cur.succs) {
       if (!visited.contains(succ)) {
         visited.add(succ);
         dfs(succ, visited);
@@ -67,7 +67,7 @@ public class Dom {
     boolean changed;
     do {
       changed = false;
-      for (int i = 0; i < revPostOrder.size()-1; i++) {
+      for (int i = 0; i < revPostOrder.size() - 1; i++) {
         Block cur = revPostOrder.get(i);
         Set<Block> newDom = new HashSet<>();
         boolean initialized = false;
@@ -134,13 +134,13 @@ public class Dom {
 
     frontier = new HashMap<>();
 
-    // for each node, find dom of imm pred then remove all of the node's dom
-    // from imm pred's dom
-
+    // initialize
     for (Block block : blocks.values()) {
       frontier.put(block, new HashSet<>());
     }
 
+    // for each node, union the dominators of its immediate predecessors then
+    // remove all of the node's strict dominators from the union
     for (Block block : blocks.values()) {
       Set<Block> targ = new HashSet<>();
 
@@ -148,7 +148,7 @@ public class Dom {
         targ.addAll(dom.get(pred));
       }
 
-      targ.removeAll(dom.get(block));
+      targ.removeIf(b -> dom.get(block).contains(b) && b != block);
 
       for (Block d : targ) {
         frontier.get(d).add(block);
@@ -182,7 +182,6 @@ public class Dom {
     }
 
     // verify dominator tree
-
     for (Block block : blocks.values()) {
       Set<Block> dominators = dom.get(block);
       Queue<Block> bfs = new LinkedList<>(block.preds);
@@ -193,8 +192,8 @@ public class Dom {
         if (dominators.contains(cur)) {
           if (!cur.equals(idom.get(block))) {
             throw new AssertionError(String.format("expected idom of %s in " +
-                    "%s to " +
-                    "be %s, but found %s", block, functionName,
+                            "%s to " +
+                            "be %s, but found %s", block, functionName,
                     cur,
                     idom.get(block)));
           }
@@ -206,17 +205,20 @@ public class Dom {
     }
 
     // verify frontier
-    for (Map.Entry<Block, Set<Block>> entry : frontier.entrySet()) {
+    for (Map.Entry<Block, Set<Block>> e : frontier.entrySet()) {
       // check that nodes in the frontier are not dominated by key but their
       // at least one of the predecessor is
 
-      for (Block node : entry.getValue()) {
-        assert !dom.get(node).contains(entry.getKey());
+      // for every node in the frontier
+      for (Block node : e.getValue()) {
+        Block nodeInFrontier = e.getKey();
+        // check that node does not strictly dominate the one in the frontier
+        assert nodeInFrontier == node || !dom.get(node).contains(nodeInFrontier);
 
         boolean found = false;
 
         for (Block pred : node.preds) {
-          if (dom.get(pred).contains(entry.getKey())) {
+          if (dom.get(pred).contains(nodeInFrontier)) {
             found = true;
             break;
           }
